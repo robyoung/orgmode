@@ -3,6 +3,7 @@ local Files = require('orgmode.parser.files')
 local Range = require('orgmode.parser.range')
 local utils = require('orgmode.utils')
 local agenda_highlights = require('orgmode.colors.highlights')
+local date = require('orgmode.objects.date')
 local hl_map = agenda_highlights.get_agenda_hl_map()
 
 local function sort_todos(todos)
@@ -46,8 +47,10 @@ function AgendaTodosView:build()
   self.items = {}
   for _, orgfile in ipairs(Files.all()) do
     for _, headline in ipairs(orgfile:get_unfinished_todo_entries()) do
-      if self.filters:matches(headline) then
-        table.insert(self.items, headline)
+      if self:_is_unscheduled_or_past(headline) then
+        if self.filters:matches(headline) then
+          table.insert(self.items, headline)
+        end
       end
     end
   end
@@ -57,6 +60,19 @@ function AgendaTodosView:build()
   self.active_view = 'todos'
   self.generate_view(self.items, self.content, self.filters, self.win_width)
   return self
+end
+
+function AgendaTodosView:_is_unscheduled_or_past(headline)
+  local scheduled_date = headline:get_scheduled_date()
+  if scheduled_date == nil then
+    return true
+  end
+  local adjusted_date = scheduled_date:get_adjusted_date()
+  local today = date:today()
+  if adjusted_date:is_same_or_before(today, 'day') then
+    return true
+  end
+  return false
 end
 
 function AgendaTodosView.generate_view(items, content, filters, win_width)
