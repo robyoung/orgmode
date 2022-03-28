@@ -86,7 +86,7 @@ function AgendaItem:_generate_data()
 end
 
 function AgendaItem:_is_valid_for_today()
-  if not self.headline_date.active or self.headline_date:is_closed() or self.headline_date:is_obsolete_range_end() then
+  if not self.headline_date.active or self.headline:is_closed() or self.headline_date:is_obsolete_range_end() then
     return false
   end
   if self.headline_date:is_none() then
@@ -115,7 +115,7 @@ function AgendaItem:_is_valid_for_today()
     if self.is_same_day then
       return true
     end
-    if self.headline_date:is_before(self.date, 'day') and not self.headline:is_done() then
+    if self.headline_date:is_before(self.date, 'day') and self.headline:is_todo() then
       return true
     end
     return false

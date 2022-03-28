@@ -472,6 +472,10 @@ function Section:cancel_active_clock()
   self.clocked_in = self.logbook:is_active()
 end
 
+function Section:is_closed()
+  return self:_get_closed_date() ~= nil
+end
+
 ---@return Date
 function Section:get_closed_date()
   return vim.tbl_filter(function(date)
