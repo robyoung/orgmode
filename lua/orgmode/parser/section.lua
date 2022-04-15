@@ -423,6 +423,24 @@ function Section:demote(amount, demote_child_sections, dryRun)
       end
     end
   end
+  for _, date in ipairs(self.dates) do
+    table.insert(lines, date.type .. ': ' .. date:to_wrapped_string())
+  end
+
+  local has_properties = false
+  for _, _ in pairs(self.properties.items) do
+    has_properties = true
+  end
+
+  if has_properties then
+    table.insert(lines, ':PROPERTIES:')
+    for key, value in pairs(self.properties.items) do
+      table.insert(lines, ':' .. key:upper() .. ':  ' .. value)
+    end
+    table.insert(lines, ':END:')
+  end
+
+  utils.concat(lines, self.content)
   if demote_child_sections then
     for _, section in ipairs(self.sections) do
       utils.concat(lines, section:demote(amount, true, dryRun))
