@@ -121,7 +121,7 @@ function AgendaItem:_is_valid_for_today()
     return false
   end
 
-  if self.headline_date:get_adjusted_date():is_same_or_before(self.date, 'day') and not self.headline:is_done() then
+  if self.headline_date:get_adjusted_date():is_same_or_before(self.date, 'day') and self.headline:is_todo() then
     return true
   end
 
